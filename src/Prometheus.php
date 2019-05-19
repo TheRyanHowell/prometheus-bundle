@@ -47,17 +47,16 @@ class Prometheus
         string $query,
         ?\DateTimeInterface $time = null,
         ?int $timeout = null
-    ): array
-    {
+    ): array {
         $params = [
             'query' => $query,
         ];
 
-        if(null !== $time) {
+        if (null !== $time) {
             $params['time'] = $time->getTimestamp();
         }
 
-        if(null !== $timeout) {
+        if (null !== $timeout) {
             $params['timeout'] = $timeout;
         }
 
@@ -78,8 +77,7 @@ class Prometheus
         \DateTimeInterface $end,
         string $step,
         ?int $timeout = null
-    ): array
-    {
+    ): array {
         $params = [
             'query' => $query,
             'start' => $start->getTimestamp(),
@@ -87,7 +85,7 @@ class Prometheus
             'step' => $step,
         ];
 
-        if(null !== $timeout) {
+        if (null !== $timeout) {
             $params['timeout'] = $timeout;
         }
 
@@ -106,12 +104,11 @@ class Prometheus
         array $match,
         \DateTimeInterface $start,
         \DateTimeInterface $end
-    ): array
-    {
+    ): array {
         $params = [
             'match[]' => $match,
             'start' => $start->getTimestamp(),
-            'end' => $end->getTimestamp()
+            'end' => $end->getTimestamp(),
         ];
 
         $query = \GuzzleHttp\Psr7\build_query($params, PHP_QUERY_RFC1738);
@@ -134,14 +131,12 @@ class Prometheus
         return $response;
     }
 
-
     public function labelValues(string $label): array
     {
-        $response = $this->request('GET', '/api/v1/label/' . $label . '/values');
+        $response = $this->request('GET', '/api/v1/label/'.$label.'/values');
 
         return $response;
     }
-
 
     public function targets(): array
     {
@@ -181,13 +176,13 @@ class Prometheus
                 $path,
                 $options
             );
-        } catch(ClientException $e) {
-            if($e->getCode() === 401) {
+        } catch (ClientException $e) {
+            if (401 === $e->getCode()) {
                 throw new AuthenticationError();
             } else {
                 throw new PrometheusError($e->getMessage(), $e->getCode());
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new PrometheusError($e->getMessage(), $e->getCode());
         }
 
